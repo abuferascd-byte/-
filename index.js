@@ -4,9 +4,21 @@ import path from "path"
 import url from "url"
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
-// قراءة الإعدادات من ملف config.json
-const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, "config.json"), "utf8"))
-const { guildId, token, bannerUrl, topImageUrl, footerIconUrl, embedTitle, poweredByName } = config
+// قراءة الإعدادات بطريقة آمنة (تدعم متغيرات البيئة في Render أو ملف config.json محلياً)
+let config = {};
+try {
+  if (fs.existsSync(path.resolve(__dirname, "config.json"))) {
+    config = JSON.parse(fs.readFileSync(path.resolve(__dirname, "config.json"), "utf8"));
+  }
+} catch (e) {}
+
+const guildId = process.env.GUILD_ID || config.guildId;
+const token = process.env.TOKEN || config.token;
+const bannerUrl = process.env.BANNER_URL || config.bannerUrl;
+const topImageUrl = process.env.TOP_IMAGE_URL || config.topImageUrl;
+const footerIconUrl = process.env.FOOTER_ICON_URL || config.footerIconUrl;
+const embedTitle = process.env.EMBED_TITLE || config.embedTitle;
+const poweredByName = process.env.POWERED_BY_NAME || config.poweredByName;
 
 // رابط الويب هوك الخاص بك لإرسال الرسائل من خلاله
 const webhookClient = new WebhookClient({ url: "https://discord.com/api/webhooks/1566853636577824909/MiqDg5CB-M1XVzW0jex0pdV_5yHWb9BSO0T-syHRttANMzZsXYp5C6OLqdGQkLN8mdo2" });
